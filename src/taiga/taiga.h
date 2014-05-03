@@ -30,6 +30,11 @@
 
 namespace taiga {
 
+enum LibraryType {
+	kAnime,
+	kManga
+};
+
 enum PlayStatus {
   kPlayStatusStopped,
   kPlayStatusPlaying,
@@ -54,7 +59,7 @@ public:
 
   void LoadData();
 
-  int current_tip_type, play_status;
+  int current_library, current_tip_type, play_status;
   bool debug_mode;
   bool logged_in;
   base::SemanticVersion version;

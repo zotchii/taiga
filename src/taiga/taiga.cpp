@@ -41,6 +41,7 @@ namespace taiga {
 App::App()
     : debug_mode(false),
       logged_in(false),
+	  current_library(kAnime),
       current_tip_type(kTipTypeDefault),
       play_status(kPlayStatusStopped) {
 #ifdef _DEBUG
