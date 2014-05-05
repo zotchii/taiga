@@ -27,6 +27,7 @@ enum PathType {
   kPathData,
   kPathDatabase,
   kPathDatabaseAnime,
+  kPathDatabaseManga,
   kPathDatabaseImage,
   kPathDatabaseSeason,
   kPathFeed,
@@ -39,7 +40,8 @@ enum PathType {
   kPathThemeCurrent,
   kPathUser,
   kPathUserHistory,
-  kPathUserLibrary
+  kPathUserLibrary,
+  kPathUserMangaLibrary
 };
 
 std::wstring GetPath(PathType type);

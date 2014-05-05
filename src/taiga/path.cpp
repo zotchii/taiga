@@ -56,6 +56,8 @@ std::wstring GetPath(PathType type) {
       return data_path + L"db\\";
     case kPathDatabaseAnime:
       return data_path + L"db\\anime.xml";
+	case kPathDatabaseManga:
+		return data_path + L"db\\manga.xml";
     case kPathDatabaseImage:
       return data_path + L"db\\image\\";
     case kPathDatabaseSeason:
@@ -82,6 +84,8 @@ std::wstring GetPath(PathType type) {
       return data_path + L"user\\" + GetUserDirectoryName() + L"\\history.xml";
     case kPathUserLibrary:
       return data_path + L"user\\" + GetUserDirectoryName() + L"\\anime.xml";
+	case kPathUserMangaLibrary:
+		return data_path + L"user\\" + GetUserDirectoryName() + L"\\manga.xml";
   }
 }
 
