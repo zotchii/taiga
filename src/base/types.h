@@ -55,4 +55,9 @@ typedef base::http::Response HttpResponse;
 // 64-bit integral data type (quadword)
 typedef unsigned __int64 QWORD, *LPQWORD;
 
+enum MediaType {
+	kAnime,
+	kManga
+};
+
 #endif  // TAIGA_BASE_TYPES_H

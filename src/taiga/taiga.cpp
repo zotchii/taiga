@@ -20,6 +20,7 @@
 #include "base/process.h"
 #include "base/string.h"
 #include "library/anime_db.h"
+#include "library/manga_db.h"
 #include "library/history.h"
 #include "taiga/announce.h"
 #include "taiga/api.h"
@@ -41,7 +42,7 @@ namespace taiga {
 App::App()
     : debug_mode(false),
       logged_in(false),
-	  current_library(kAnime),
+	  current_media_type(MediaType::kAnime),
       current_tip_type(kTipTypeDefault),
       play_status(kPlayStatusStopped) {
 #ifdef _DEBUG
@@ -118,6 +119,7 @@ void App::Uninitialize() {
   // Save
   Settings.Save();
   AnimeDatabase.SaveDatabase();
+  MangaDatabase.SaveDatabase();
   Aggregator.SaveArchive();
 
   // Exit
@@ -156,6 +158,9 @@ void App::LoadData() {
   AnimeDatabase.LoadDatabase();
   AnimeDatabase.LoadList();
   AnimeDatabase.ClearInvalidItems();
+  MangaDatabase.LoadDatabase();
+  MangaDatabase.LoadList();
+  MangaDatabase.ClearInvalidItems();
 
   History.Load();
 }
