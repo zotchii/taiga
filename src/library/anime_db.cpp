@@ -42,7 +42,7 @@ namespace anime {
 
 bool Database::LoadDatabase() {
   xml_document document;
-  std::wstring path = taiga::GetPath(taiga::kPathDatabaseAnime);
+  std::wstring path = getDatabasePath();
   unsigned int options = pugi::parse_default & ~pugi::parse_eol;
   xml_parse_result parse_result = document.load_file(path.c_str(), options);
 
@@ -64,7 +64,7 @@ bool Database::LoadDatabase() {
 }
 
 void Database::ReadDatabaseNode(xml_node& database_node) {
-  foreach_xmlnode_(node, database_node, L"anime") {
+  foreach_xmlnode_(node, database_node, getMediaTypeString()) {
     std::map<enum_t, std::wstring> id_map;
 
     foreach_xmlnode_(id_node, node, L"id") {
@@ -121,13 +121,13 @@ bool Database::SaveDatabase() {
   xml_node database_node = document.append_child(L"database");
   WriteDatabaseNode(database_node);
 
-  std::wstring path = taiga::GetPath(taiga::kPathDatabaseAnime);
+  std::wstring path = getDatabasePath();
   return XmlWriteDocumentToFile(document, path);
 }
 
 void Database::WriteDatabaseNode(xml_node& database_node) {
   foreach_(it, items) {
-    xml_node anime_node = database_node.append_child(L"anime");
+    xml_node anime_node = database_node.append_child(getMediaTypeString());
 
     for (int i = 0; i <= sync::kLastService; i++) {
       std::wstring id = it->second.GetId(i);
@@ -347,7 +347,7 @@ bool Database::LoadList() {
     return false;
 
   xml_document document;
-  std::wstring path = taiga::GetPath(taiga::kPathUserLibrary);
+  std::wstring path = getUserLibraryPath();
   xml_parse_result parse_result = document.load_file(path.c_str());
 
   if (parse_result.status != pugi::status_ok) {
@@ -368,7 +368,7 @@ bool Database::LoadList() {
     ReadDatabaseNode(node_database);
 
     xml_node node_library = document.child(L"library");
-    foreach_xmlnode_(node, node_library, L"anime") {
+    foreach_xmlnode_(node, node_library, getMediaTypeString()) {
       Item anime_item;
       anime_item.SetId(XmlReadStrValue(node, L"id"), sync::kTaiga);
 
@@ -413,7 +413,7 @@ bool Database::SaveList(bool include_database) {
   foreach_(it, items) {
     Item* item = &it->second;
     if (item->IsInList()) {
-      xml_node node = node_library.append_child(L"anime");
+      xml_node node = node_library.append_child(getMediaTypeString());
       XmlWriteIntValue(node, L"id", item->GetId());
       XmlWriteIntValue(node, L"progress", item->GetMyLastWatchedEpisode(false));
       XmlWriteStrValue(node, L"date_start", std::wstring(item->GetMyDateStart()).c_str());
@@ -427,7 +427,7 @@ bool Database::SaveList(bool include_database) {
     }
   }
 
-  std::wstring path = taiga::GetPath(taiga::kPathUserLibrary);
+  std::wstring path = getUserLibraryPath();
   return XmlWriteDocumentToFile(document, path);
 }
 
@@ -575,7 +575,7 @@ bool Database::CheckOldUserDirectory() {
 void Database::ReadDatabaseInCompatibilityMode(xml_document& document) {
   xml_node animedb_node = document.child(L"animedb");
 
-  foreach_xmlnode_(node, animedb_node, L"anime") {
+  foreach_xmlnode_(node, animedb_node, getMediaTypeString()) {
     std::wstring id = XmlReadStrValue(node, L"series_animedb_id");
     Item& item = items[ToInt(id)];  // Creates the item if it doesn't exist
     item.SetId(id, sync::kTaiga);
@@ -601,7 +601,7 @@ void Database::ReadDatabaseInCompatibilityMode(xml_document& document) {
 void Database::ReadListInCompatibilityMode(xml_document& document) {
   xml_node myanimelist = document.child(L"myanimelist");
 
-  foreach_xmlnode_(node, myanimelist, L"anime") {
+  foreach_xmlnode_(node, myanimelist, getMediaTypeString()) {
     Item anime_item;
     anime_item.SetId(XmlReadStrValue(node, L"series_animedb_id"), sync::kMyAnimeList);
 
@@ -628,6 +628,18 @@ void Database::ReadListInCompatibilityMode(xml_document& document) {
 
     UpdateItem(anime_item);
   }
+}
+
+std::wstring Database::getDatabasePath() const {
+	return taiga::GetPath(taiga::kPathDatabaseAnime);
+}
+
+std::wstring Database::getUserLibraryPath() const {
+	return taiga::GetPath(taiga::kPathUserLibrary);
+}
+
+wchar_t* Database::getMediaTypeString() const {
+	return L"anime";
 }
 
 }  // namespace anime

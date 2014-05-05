@@ -64,6 +64,10 @@ private:
   bool CheckOldUserDirectory();
   void ReadDatabaseInCompatibilityMode(pugi::xml_document& document);
   void ReadListInCompatibilityMode(pugi::xml_document& document);
+
+  virtual std::wstring getDatabasePath() const;
+  virtual std::wstring getUserLibraryPath() const;
+  virtual wchar_t* getMediaTypeString() const;
 };
 
 }  // namespace anime
