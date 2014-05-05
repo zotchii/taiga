@@ -48,6 +48,7 @@ public:
   const std::wstring& GetId(enum_t service) const;
   const std::wstring& GetSlug() const;
   enum_t GetSource() const;
+  MediaType GetMediaType() const;
   int GetType() const;
   int GetEpisodeCount() const;
   int GetEpisodeLength() const;
@@ -142,9 +143,11 @@ public:
   bool IsInList() const;
   void RemoveFromUserList();
 
-private:
+protected:
   // Helper function
   HistoryItem* SearchHistory(int search_mode) const;
+
+  MediaType media_type_;
 
   // Series information, stored in db\anime.xml
   library::Metadata metadata_;

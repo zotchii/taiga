@@ -34,6 +34,7 @@ namespace anime {
 
 Item::Item() {
   metadata_.uid.resize(sync::kLastService + 1);
+  media_type_ = MediaType::kAnime;
 }
 
 Item::~Item() {
