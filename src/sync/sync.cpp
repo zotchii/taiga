@@ -41,11 +41,12 @@ void AuthenticateUser() {
   ServiceManager.MakeRequest(request);
 }
 
-void GetLibraryEntries() {
+void GetLibraryEntries(MediaType media_type) {
   Request request(kGetLibraryEntries);
   SetActiveServiceForRequest(request);
   if (!AddAuthenticationToRequest(request))
     return;
+  request.media_type = media_type;
   ServiceManager.MakeRequest(request);
 }
 
@@ -92,7 +93,8 @@ void Synchronize() {
       // Download list
       ui::ChangeStatusText(L"Downloading anime list...");
       ui::EnableDialogInput(ui::kDialogMain, false);
-      GetLibraryEntries();
+      GetLibraryEntries(kAnime);
+	  GetLibraryEntries(kManga);
     } else {
       ui::ChangeStatusText(
           L"Cannot synchronize, username and password not available");
@@ -105,7 +107,8 @@ void Synchronize() {
       // Retrieve list
       ui::ChangeStatusText(L"Synchronizing anime list...");
       ui::EnableDialogInput(ui::kDialogMain, false);
-      GetLibraryEntries();
+	  GetLibraryEntries(kAnime);
+	  GetLibraryEntries(kManga);
     }
   }
 }

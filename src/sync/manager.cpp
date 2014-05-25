@@ -19,6 +19,7 @@
 #include "base/foreach.h"
 #include "base/string.h"
 #include "library/anime_db.h"
+#include "library/manga_db.h"
 #include "library/history.h"
 #include "sync/hummingbird.h"
 #include "sync/manager.h"
@@ -234,6 +235,7 @@ void Manager::HandleResponse(Response& response, HttpResponse& http_response) {
 
     case kGetLibraryEntries: {
       AnimeDatabase.SaveList();
+      MangaDatabase.SaveList();
       ui::ChangeStatusText(L"Successfully downloaded the list.");
       ui::OnLibraryChange();
       break;

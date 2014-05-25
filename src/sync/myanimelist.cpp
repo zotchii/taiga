@@ -27,6 +27,8 @@
 #include "library/anime_db.h"
 #include "library/anime_item.h"
 #include "library/anime_util.h"
+#include "library/manga_db.h"
+#include "library/manga_item.h"
 #include "sync/myanimelist.h"
 #include "sync/myanimelist_util.h"
 
@@ -115,6 +117,8 @@ void Service::GetLibraryEntries(Request& request, HttpRequest& http_request) {
   // Changing the status parameter to some other value such as "1" or "watching"
   // doesn't seem to make any difference.
   http_request.url.query[L"status"] = L"all";
+  // Specify anime list or manga list
+  http_request.url.query[L"type"] = request.media_type == kAnime ? L"anime" : L"manga";
 }
 
 void Service::GetMetadataById(Request& request, HttpRequest& http_request) {
@@ -252,7 +256,7 @@ void Service::GetLibraryEntries(Response& response, HttpResponse& http_response)
   // - my_start_date
   // - my_finish_date
   // - my_score
-  // - my_status
+  // - my_status	
   // - my_rewatching
   // - my_rewatching_ep
   // - my_last_updated
@@ -285,6 +289,57 @@ void Service::GetLibraryEntries(Response& response, HttpResponse& http_response)
 
     AnimeDatabase.UpdateItem(anime_item);
   }
+
+/* 
+	Manga Parameters:
+		series_mangadb_id
+		series_title
+		series_synonyms
+		series_type
+		series_chapters, int
+		series_volumes. int
+		series_status. int OR string. 1 / reading, 2 / completed, 3 / onhold, 4 / dropped, 6 / plantoread
+		series_start
+		series_end
+		series_image
+		my_id
+		my_read_chapters
+		my_read_volumes
+		my_start_date, YYYY-MM-DD
+		my_finish_date, YYYY-MM-DD
+		my_score. int
+		my_status
+		my_rereadingg, TYPO IN MYANIMELIST'S XML AT THIS TIME
+		my_rereading_chap
+		my_last_updated
+		my_tags
+*/
+
+  foreach_xmlnode_(node, node_myanimelist, L"manga") {
+    manga::Item manga_item;
+    manga_item.SetSource(this->id());
+    manga_item.SetId(XmlReadStrValue(node, L"series_mangadb_id"), this->id());
+    manga_item.SetId(XmlReadStrValue(node, L"series_mangadb_id"), kTaiga);
+    manga_item.SetLastModified(time(nullptr));  // current time
+    manga_item.SetTitle(XmlReadStrValue(node, L"series_title"));
+    manga_item.SetSynonyms(XmlReadStrValue(node, L"series_synonyms"));
+    manga_item.SetType(TranslateSeriesTypeFrom(XmlReadIntValue(node,
+                       L"series_type")));
+    manga_item.SetDateStart(XmlReadStrValue(node, L"series_start"));
+    manga_item.SetDateEnd(XmlReadStrValue(node, L"series_end"));
+    manga_item.SetImageUrl(XmlReadStrValue(node, L"series_image"));
+    manga_item.AddtoUserList();
+    manga_item.SetMyDateStart(XmlReadStrValue(node, L"my_start_date"));
+    manga_item.SetMyDateEnd(XmlReadStrValue(node, L"my_finish_date"));
+    manga_item.SetMyScore(XmlReadIntValue(node, L"my_score"));
+    manga_item.SetMyStatus(TranslateMyStatusFrom(XmlReadIntValue(node,
+                           L"my_status")));
+    manga_item.SetMyLastUpdated(XmlReadStrValue(node, L"my_last_updated"));
+    manga_item.SetMyTags(XmlReadStrValue(node, L"my_tags"));
+
+    MangaDatabase.UpdateItem(manga_item);
+  }
+
 }
 
 void Service::GetMetadataById(Response& response, HttpResponse& http_response) {

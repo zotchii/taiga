@@ -33,6 +33,9 @@ namespace anime {
 
 class Database {
 public:
+  Database();
+  virtual ~Database();
+
   bool LoadDatabase();
   bool SaveDatabase();
 
@@ -57,17 +60,17 @@ public:
 public:
   std::map<int, Item> items;
 
-private:
-  void ReadDatabaseNode(pugi::xml_node& database_node);
-  void WriteDatabaseNode(pugi::xml_node& database_node);
+protected:
+  virtual void ReadDatabaseNode(pugi::xml_node& database_node);
+  virtual void WriteDatabaseNode(pugi::xml_node& database_node);
 
   bool CheckOldUserDirectory();
   void ReadDatabaseInCompatibilityMode(pugi::xml_document& document);
   void ReadListInCompatibilityMode(pugi::xml_document& document);
 
-  virtual std::wstring getDatabasePath() const;
-  virtual std::wstring getUserLibraryPath() const;
-  virtual wchar_t* getMediaTypeString() const;
+  virtual std::wstring GetDatabasePath() const;
+  virtual std::wstring GetUserLibraryPath() const;
+  virtual wchar_t* GetMediaTypeString() const;
 };
 
 }  // namespace anime

@@ -27,7 +27,7 @@
 namespace sync {
 
 void AuthenticateUser();
-void GetLibraryEntries();
+void GetLibraryEntries(MediaType media_type = kAnime);
 void GetMetadataById(int id);
 void GetMetadataByIdV2(int id);
 void SearchTitle(string_t title, int id);

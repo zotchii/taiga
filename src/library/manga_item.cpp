@@ -4,7 +4,7 @@
 namespace manga {
 
 Item::Item() {
-	media_type_ = MediaType::kManga;
+	media_type_ = kManga;
 }
 
 Item::~Item() {

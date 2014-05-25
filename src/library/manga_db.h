@@ -7,13 +7,16 @@ namespace manga {
 class Database : public anime::Database {
 
 public:
-	Database();
-	virtual ~Database();
+  Database();
+  virtual ~Database();
 
-private:
-	virtual std::wstring getDatabasePath() const;
-	virtual std::wstring getUserLibraryPath() const;
-	virtual wchar_t* getMediaTypeString() const;
+  virtual int UpdateItem(const anime::Item& item);
+//  virtual void UpdateItem(const HistoryItem& history_item);
+
+protected:
+  virtual std::wstring GetDatabasePath() const;
+  virtual std::wstring GetUserLibraryPath() const;
+  virtual wchar_t* GetMediaTypeString() const;
 };
 
 } // namespace manga

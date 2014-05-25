@@ -159,6 +159,7 @@ const sync::Service* GetCurrentService();
 sync::ServiceId GetCurrentServiceId();
 const std::wstring GetCurrentUsername();
 const std::wstring GetCurrentPassword();
+MediaType GetCurrentMediaType();
 
 }  // namespace taiga
 

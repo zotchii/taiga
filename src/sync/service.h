@@ -57,6 +57,7 @@ public:
 
   ServiceId service_id;
   RequestType type;
+  MediaType media_type;
   dictionary_t data;
 };
 
@@ -67,6 +68,7 @@ public:
 
   ServiceId service_id;
   RequestType type;
+  MediaType media_type;
   dictionary_t data;
 };
 

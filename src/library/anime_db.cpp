@@ -40,9 +40,13 @@ anime::Database AnimeDatabase;
 
 namespace anime {
 
+Database::Database() {}
+
+Database::~Database() {}
+
 bool Database::LoadDatabase() {
   xml_document document;
-  std::wstring path = getDatabasePath();
+  std::wstring path = GetDatabasePath();
   unsigned int options = pugi::parse_default & ~pugi::parse_eol;
   xml_parse_result parse_result = document.load_file(path.c_str(), options);
 
@@ -64,7 +68,7 @@ bool Database::LoadDatabase() {
 }
 
 void Database::ReadDatabaseNode(xml_node& database_node) {
-  foreach_xmlnode_(node, database_node, getMediaTypeString()) {
+  foreach_xmlnode_(node, database_node, GetMediaTypeString()) {
     std::map<enum_t, std::wstring> id_map;
 
     foreach_xmlnode_(id_node, node, L"id") {
@@ -121,13 +125,13 @@ bool Database::SaveDatabase() {
   xml_node database_node = document.append_child(L"database");
   WriteDatabaseNode(database_node);
 
-  std::wstring path = getDatabasePath();
+  std::wstring path = GetDatabasePath();
   return XmlWriteDocumentToFile(document, path);
 }
 
 void Database::WriteDatabaseNode(xml_node& database_node) {
   foreach_(it, items) {
-    xml_node anime_node = database_node.append_child(getMediaTypeString());
+    xml_node anime_node = database_node.append_child(GetMediaTypeString());
 
     for (int i = 0; i <= sync::kLastService; i++) {
       std::wstring id = it->second.GetId(i);
@@ -347,7 +351,7 @@ bool Database::LoadList() {
     return false;
 
   xml_document document;
-  std::wstring path = getUserLibraryPath();
+  std::wstring path = GetUserLibraryPath();
   xml_parse_result parse_result = document.load_file(path.c_str());
 
   if (parse_result.status != pugi::status_ok) {
@@ -368,7 +372,7 @@ bool Database::LoadList() {
     ReadDatabaseNode(node_database);
 
     xml_node node_library = document.child(L"library");
-    foreach_xmlnode_(node, node_library, getMediaTypeString()) {
+    foreach_xmlnode_(node, node_library, GetMediaTypeString()) {
       Item anime_item;
       anime_item.SetId(XmlReadStrValue(node, L"id"), sync::kTaiga);
 
@@ -413,7 +417,7 @@ bool Database::SaveList(bool include_database) {
   foreach_(it, items) {
     Item* item = &it->second;
     if (item->IsInList()) {
-      xml_node node = node_library.append_child(getMediaTypeString());
+      xml_node node = node_library.append_child(GetMediaTypeString());
       XmlWriteIntValue(node, L"id", item->GetId());
       XmlWriteIntValue(node, L"progress", item->GetMyLastWatchedEpisode(false));
       XmlWriteStrValue(node, L"date_start", std::wstring(item->GetMyDateStart()).c_str());
@@ -427,7 +431,7 @@ bool Database::SaveList(bool include_database) {
     }
   }
 
-  std::wstring path = getUserLibraryPath();
+  std::wstring path = GetUserLibraryPath();
   return XmlWriteDocumentToFile(document, path);
 }
 
@@ -575,7 +579,7 @@ bool Database::CheckOldUserDirectory() {
 void Database::ReadDatabaseInCompatibilityMode(xml_document& document) {
   xml_node animedb_node = document.child(L"animedb");
 
-  foreach_xmlnode_(node, animedb_node, getMediaTypeString()) {
+  foreach_xmlnode_(node, animedb_node, GetMediaTypeString()) {
     std::wstring id = XmlReadStrValue(node, L"series_animedb_id");
     Item& item = items[ToInt(id)];  // Creates the item if it doesn't exist
     item.SetId(id, sync::kTaiga);
@@ -601,7 +605,7 @@ void Database::ReadDatabaseInCompatibilityMode(xml_document& document) {
 void Database::ReadListInCompatibilityMode(xml_document& document) {
   xml_node myanimelist = document.child(L"myanimelist");
 
-  foreach_xmlnode_(node, myanimelist, getMediaTypeString()) {
+  foreach_xmlnode_(node, myanimelist, GetMediaTypeString()) {
     Item anime_item;
     anime_item.SetId(XmlReadStrValue(node, L"series_animedb_id"), sync::kMyAnimeList);
 
@@ -630,15 +634,15 @@ void Database::ReadListInCompatibilityMode(xml_document& document) {
   }
 }
 
-std::wstring Database::getDatabasePath() const {
+std::wstring Database::GetDatabasePath() const {
 	return taiga::GetPath(taiga::kPathDatabaseAnime);
 }
 
-std::wstring Database::getUserLibraryPath() const {
+std::wstring Database::GetUserLibraryPath() const {
 	return taiga::GetPath(taiga::kPathUserLibrary);
 }
 
-wchar_t* Database::getMediaTypeString() const {
+wchar_t* Database::GetMediaTypeString() const {
 	return L"anime";
 }
 
